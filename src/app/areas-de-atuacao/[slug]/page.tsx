@@ -1,4 +1,5 @@
 // src/app/areas-de-atuacao/[slug]/page.tsx
+import Link from 'next/link';
 
 const areasData: { [key: string]: { title: string; content: string[] } } = {
   'direito-de-familia-e-sucessoes': {
@@ -30,9 +31,9 @@ export default function AreaDetailPage({ params }: { params: { slug: string } })
   if (!area) {
     return (
       <div className="text-center py-20">
-        <h1 className="text-3xl font-bold">Área de Atuação Não Encontrada</h1>
-        <p className="mt-4">O conteúdo que você procura não foi localizado.</p>
-        <Link href="/areas-de-atuacao" className="mt-6 inline-block text-blue-800 font-bold hover:underline">
+        <h1 className="text-3xl font-bold dark:text-white">Área de Atuação Não Encontrada</h1>
+        <p className="mt-4 dark:text-gray-300">O conteúdo que você procura não foi localizado.</p>
+        <Link href="/areas-de-atuacao" className="mt-6 inline-block text-blue-800 dark:text-blue-400 font-bold hover:underline">
           Ver todas as áreas
         </Link>
       </div>
@@ -42,8 +43,8 @@ export default function AreaDetailPage({ params }: { params: { slug: string } })
   return (
     <section className="py-12">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-800 mb-8">{area.title}</h1>
-        <div className="prose lg:prose-xl max-w-none text-gray-700 space-y-4">
+        <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-8">{area.title}</h1>
+        <div className="prose lg:prose-xl max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert space-y-4">
           {area.content.map((paragraph, index) => (
             <p key={index}>{paragraph}</p>
           ))}

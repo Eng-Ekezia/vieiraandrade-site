@@ -1,18 +1,17 @@
 // src/app/sobre/page.tsx
-
 export default function SobrePage() {
   return (
     <section className="py-12">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">
+        <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-8 text-center">
           Dr. Marcelo Vieira de Andrade: Trajetória e Compromisso com a Justiça
         </h1>
-        <div className="prose lg:prose-xl max-w-none text-gray-700">
+        <div className="prose lg:prose-xl max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert">
           <p>
             Com uma carreira pautada pela ética, dedicação e busca incessante por soluções jurídicas eficazes, 
             Dr. Marcelo Vieira de Andrade (OAB/MG 123.456) consolidou sua reputação como um advogado de confiança 
             e alta capacidade técnica. Graduado pela prestigiosa Faculdade de Direito da Universidade Federal de 
-            UBerlândia (UFU), especializou-se em [mencionar especialização principal aqui], atuando desde 
+            Minas Gerais (UFMG), especializou-se em [mencionar especialização principal aqui], atuando desde 
             então na defesa intransigente dos direitos de seus clientes.
           </p>
           <p>
