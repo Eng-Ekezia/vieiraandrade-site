@@ -1,8 +1,7 @@
 // src/app/layout.tsx
-
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { Providers } from './providers'; // Import the Providers
+import { Providers } from './providers';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import './globals.css';
@@ -20,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`${inter.className} flex flex-col min-h-screen transition-colors duration-300`}>
+    <html lang="pt-BR" suppressHydrationWarning className="scroll-smooth">
+      <body className={`${inter.className} flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300`}>
         <Providers>
           <Header />
           <main className="flex-grow container mx-auto px-6 py-8">

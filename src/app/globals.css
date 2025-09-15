@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
+/* Define as variáveis de cor para o tema claro (padrão) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #ffffff; /* Fundo branco */
+  --foreground: #111827; /* Texto escuro (cinza 900) */
 }
 
-@theme inline {
+/* Define as variáveis para o tema escuro quando a classe .dark for aplicada */
+:root.dark {
+  --background: #111827; /* Fundo escuro (cinza 900) */
+  --foreground: #f9fafb; /* Texto claro (cinza 50) */
+}
+
+@theme {
+  /* Mapeia as variáveis para o TailwindCSS v4 */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Aplica as cores base ao corpo da página */
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
