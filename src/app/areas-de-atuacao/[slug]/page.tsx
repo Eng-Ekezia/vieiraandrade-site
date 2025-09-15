@@ -25,7 +25,7 @@ const areasData: { [key: string]: { title: string; content: string[] } } = {
   },
 };
 
-export default function AreaDetailPage({ params }: { params: { slug: string } }) {
+export default async function AreaDetailPage({ params }: { params: { slug: string } }) {
   const area = areasData[params.slug];
 
   if (!area) {
