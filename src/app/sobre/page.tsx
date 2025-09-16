@@ -11,7 +11,7 @@ export default function SobrePage() {
             Com uma carreira pautada pela ética, dedicação e busca incessante por soluções jurídicas eficazes, 
             Dr. Marcelo Vieira de Andrade (OAB/MG 123.456) consolidou sua reputação como um advogado de confiança 
             e alta capacidade técnica. Graduado pela prestigiosa Faculdade de Direito da Universidade Federal de 
-            Minas Gerais (UFMG), especializou-se em [mencionar especialização principal aqui], atuando desde 
+            Uberlândia (UFU), especializou-se em [mencionar especialização principal aqui], atuando desde 
             então na defesa intransigente dos direitos de seus clientes.
           </p>
           <p>

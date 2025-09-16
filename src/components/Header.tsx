@@ -50,7 +50,7 @@ function WhatsAppButton() {
   return (
     <Button asChild className="bg-green-600 hover:bg-green-700 text-white font-medium">
       <a
-        href="https://wa.me/+5531999998888" // Seu número de WhatsApp (do arquivo original)
+        href="https://wa.me/+5534988617989" // Seu número de WhatsApp (do arquivo original)
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-2"

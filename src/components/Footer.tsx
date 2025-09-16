@@ -24,14 +24,14 @@ export function Footer() {
             <ul className="mt-4 space-y-2 text-sm">
               {/* Todos os textos de lista atualizados para text-muted-foreground */}
               <li className="text-muted-foreground">
-                Endereço: Rua dos Inconfidentes, 123, Sala 405, Funcionários, Belo Horizonte/MG
+                Endereço: Rua Joaquim Barbosa, 220, Sala A, Jardim Regina, Araguari/MG
               </li>
               {/* Hover do link atualizado para hover:text-primary */}
               <li className="text-muted-foreground hover:text-primary">
                 <a href="mailto:contato@vieiraandrade.com.br">contato@vieiraandrade.com.br</a>
               </li>
               <li className="text-muted-foreground hover:text-primary">
-                <a href="tel:+5531999998888">(31) 99999-8888</a>
+                <a href="tel:+5534988617989">(34) 98861-7989</a>
               </li>
               <li className="text-muted-foreground">
                 Atendimento: Seg a Sex, das 9h às 18h

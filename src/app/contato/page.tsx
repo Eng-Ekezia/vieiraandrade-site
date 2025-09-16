@@ -20,14 +20,14 @@ export default function ContatoPage() {
           <div>
             <h3 className="text-xl font-semibold">Endereço</h3>
             <p className="text-muted-foreground mt-2">
-              Rua dos Inconfidentes, 123, Sala 405<br/>
-              Bairro Funcionários, Belo Horizonte/MG<br/>
-              CEP: 30140-120
+              ua Joaquim Barbosa, 220, Sala A<br/>
+              Jardim Regina, Araguari/MG<br/>
+              CEP: 38440-153
             </p>
           </div>
           <div>
             <h3 className="text-xl font-semibold">Telefone & WhatsApp</h3>
-            <a href="tel:+5531999998888" className="text-muted-foreground hover:text-primary mt-2 block">(31) 99999-8888</a>
+            <a href="tel:+5534988617989" className="text-muted-foreground hover:text-primary mt-2 block">(34) 9 8861-7989</a>
           </div>
           <div>
             <h3 className="text-xl font-semibold">Email</h3>
