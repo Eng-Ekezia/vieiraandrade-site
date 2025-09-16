@@ -1,29 +1,39 @@
 // src/app/sobre/page.tsx
-export default function SobrePage() {
+// 1. Importar Cliente, PortableText e GROQ
+import { sanityClient } from '@/lib/sanity.client';
+import { PortableText } from '@portabletext/react';
+import { groq } from 'next-sanity';
+
+// 2. Definir o tipo de dados
+interface PageSobreData {
+  title: string;
+  content: any; // Tipo para o Portable Text
+}
+
+// 3. Query para buscar o documento único 'pageSobre'
+const query = groq`*[_type == "pageSobre" && _id == "pageSobre"][0]`;
+
+// 4. Transformar a página num Server Component Assíncrono
+export default async function SobrePage() {
+  
+  // 5. Buscar os dados do CMS
+  const data: PageSobreData = await sanityClient.fetch(query);
+
   return (
     <section className="py-12">
       <div className="max-w-4xl mx-auto">
+        {/* 6. Renderizar o Título Dinâmico */}
         <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-8 text-center">
-          Dr. Marcelo Vieira de Andrade: Trajetória e Compromisso com a Justiça
+          {data.title}
         </h1>
+        {/* 7. Renderizar o Conteúdo Dinâmico (Portable Text) */}
         <div className="prose lg:prose-xl max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert">
-          <p>
-            Com uma carreira pautada pela ética, dedicação e busca incessante por soluções jurídicas eficazes, 
-            Dr. Marcelo Vieira de Andrade (OAB/MG 123.456) consolidou sua reputação como um advogado de confiança 
-            e alta capacidade técnica. Graduado pela prestigiosa Faculdade de Direito da Universidade Federal de 
-            Uberlândia (UFU), especializou-se em [mencionar especialização principal aqui], atuando desde 
-            então na defesa intransigente dos direitos de seus clientes.
-          </p>
-          <p>
-            Nossa filosofia de trabalho é baseada em um atendimento personalizado, onde cada caso é tratado com 
-            a profundidade e a atenção que merece. Acreditamos que a relação de confiança entre cliente e 
-            advogado é o pilar para o sucesso. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do 
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud 
-            exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Nosso compromisso é oferecer 
-            segurança jurídica e resultados concretos.
-          </p>
+          <PortableText value={data.content} />
         </div>
       </div>
     </section>
   );
 }
+
+// 8. Adicionar Revalidação (ISR)
+export const revalidate = 60;

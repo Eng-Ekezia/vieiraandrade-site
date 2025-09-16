@@ -1,7 +1,35 @@
 // src/components/Footer.tsx
 import Link from 'next/link';
+// 1. Importar o cliente Sanity e GROQ
+import { sanityClient } from '@/lib/sanity.client';
+import { groq } from 'next-sanity';
 
-export function Footer() {
+// 2. Definir o tipo de dados (podemos reutilizar ou redefinir, vamos redefinir para manter o componente isolado)
+interface FooterSettings {
+  addressStreet: string;
+  addressDistrict: string;
+  phone: string;
+  phoneFormatted: string;
+  email: string;
+  openingHours: string;
+}
+
+// 3. Definir a query (é seguro repetir, o Next.js fará o cache da busca)
+const settingsQuery = groq`*[_type == "settings" && _id == "settings"][0] {
+  addressStreet,
+  addressDistrict,
+  phone,
+  phoneFormatted,
+  email,
+  openingHours
+}`;
+
+// 4. Transformar o Footer num Server Component Assíncrono
+export async function Footer() {
+  
+  // 5. Buscar os dados
+  const settings: FooterSettings = await sanityClient.fetch(settingsQuery);
+
   return (
     // Classes de fundo e texto atualizadas para variáveis semânticas
     <footer className="bg-muted text-foreground mt-auto">
@@ -18,23 +46,21 @@ export function Footer() {
             </p>
           </div>
           
-          {/* Coluna 2: Contato */}
+          {/* Coluna 2: Contato (Agora Dinâmica) */}
           <div>
             <h3 className="font-bold text-lg text-foreground">Contato</h3>
             <ul className="mt-4 space-y-2 text-sm">
-              {/* Todos os textos de lista atualizados para text-muted-foreground */}
               <li className="text-muted-foreground">
-                Endereço: Rua Joaquim Barbosa, 220, Sala A, Jardim Regina, Araguari/MG
-              </li>
-              {/* Hover do link atualizado para hover:text-primary */}
-              <li className="text-muted-foreground hover:text-primary">
-                <a href="mailto:contato@vieiraandrade.com.br">contato@vieiraandrade.com.br</a>
+                Endereço: {settings.addressStreet}, {settings.addressDistrict}
               </li>
               <li className="text-muted-foreground hover:text-primary">
-                <a href="tel:+5534988617989">(34) 98861-7989</a>
+                <a href={`mailto:${settings.email}`}>{settings.email}</a>
+              </li>
+              <li className="text-muted-foreground hover:text-primary">
+                <a href={`tel:${settings.phone}`}>{settings.phoneFormatted}</a>
               </li>
               <li className="text-muted-foreground">
-                Atendimento: Seg a Sex, das 9h às 18h
+                Atendimento: {settings.openingHours}
               </li>
             </ul>
           </div>
