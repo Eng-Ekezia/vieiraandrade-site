@@ -6,36 +6,48 @@ import { sanityClient } from '@/lib/sanity.client';
 import { groq } from 'next-sanity';
 import { PortableText } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
+import { notFound } from 'next/navigation'; // Importar a função notFound
 
+// --- Tipos de Dados ---
 interface AreaDetail {
   title: string;
   content: PortableTextBlock[];
 }
 
-const query = groq`*[_type == "areaDeAtuacao" && slug.current == $slug][0] {
-  title,
-  content
-}`;
-
-// Definindo o tipo explicitamente para resolver o erro local do TypeScript
-export default async function AreaDetailPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+// --- Função para Gerar Rotas Estáticas (ESSENCIAL PARA O BUILD) ---
+// Esta função informa ao Next.js quais páginas de slug ele precisa construir.
+export async function generateStaticParams() {
+  const query = groq`*[_type == "areaDeAtuacao" && defined(slug.current)][] {
+    "slug": slug.current
+  }`;
+  const slugs: { slug: string }[] = await sanityClient.fetch(query);
   
-  const area: AreaDetail = await sanityClient.fetch(query, { slug });
+  // Retornamos um array de objetos, onde cada objeto tem a chave 'slug'
+  return slugs.map(({ slug }) => ({
+    slug,
+  }));
+}
 
+
+// --- Função de Fetching de Dados Dedicada ---
+// Isolamos a lógica de buscar os dados do CMS em sua própria função.
+async function getAreaData(slug: string): Promise<AreaDetail | null> {
+  const query = groq`*[_type == "areaDeAtuacao" && slug.current == $slug][0] {
+    title,
+    content
+  }`;
+  const area = await sanityClient.fetch<AreaDetail | null>(query, { slug });
+  return area;
+}
+
+
+// --- Componente da Página (Agora mais simples) ---
+export default async function AreaDetailPage({ params }: { params: { slug: string } }) {
+  const area = await getAreaData(params.slug);
+
+  // Se a área não for encontrada, renderiza a página 404.
   if (!area) {
-    return (
-      <div className="text-center py-20">
-        <h1 className="text-3xl font-bold">Área de Atuação Não Encontrada</h1>
-        <p className="mt-4 text-muted-foreground">O conteúdo que você procura não foi localizado.</p>
-        <Button asChild className="mt-6">
-          <Link href="/areas-de-atuacao">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Ver todas as áreas
-          </Link>
-        </Button>
-      </div>
-    );
+    notFound();
   }
 
   return (
