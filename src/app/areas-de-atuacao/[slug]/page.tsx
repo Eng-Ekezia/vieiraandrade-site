@@ -17,10 +17,7 @@ const query = groq`*[_type == "areaDeAtuacao" && slug.current == $slug][0] {
   content
 }`;
 
-// 1. A interface 'PageProps' foi REMOVIDA daqui.
-
-// 2. A anotação de tipo foi REMOVIDA da declaração da função.
-//    Agora, deixamos o Next.js e o TypeScript inferirem os tipos.
+// Definindo o tipo explicitamente para resolver o erro local do TypeScript
 export default async function AreaDetailPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
   
