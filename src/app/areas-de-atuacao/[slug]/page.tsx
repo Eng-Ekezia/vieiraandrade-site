@@ -5,35 +5,28 @@ import { ArrowLeft } from 'lucide-react';
 import { sanityClient } from '@/lib/sanity.client';
 import { groq } from 'next-sanity';
 import { PortableText } from '@portabletext/react';
-// 1. Importar o tipo PortableTextBlock
 import type { PortableTextBlock } from '@portabletext/types';
 
-// 2. Definir o tipo de dados para a página de detalhe com o tipo correto
 interface AreaDetail {
   title: string;
-  content: PortableTextBlock[]; // Substituir 'any' por 'PortableTextBlock[]'
+  content: PortableTextBlock[];
 }
-
-// ... (o resto do ficheiro permanece igual até à declaração do componente)
 
 const query = groq`*[_type == "areaDeAtuacao" && slug.current == $slug][0] {
   title,
   content
 }`;
 
-type PageProps = {
-  params: {
-    slug: string;
-  }
-}
+// 1. A interface 'PageProps' foi REMOVIDA daqui.
 
-export default async function AreaDetailPage({ params }: PageProps) {
+// 2. A anotação de tipo foi REMOVIDA da declaração da função.
+//    Agora, deixamos o Next.js e o TypeScript inferirem os tipos.
+export default async function AreaDetailPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
   
   const area: AreaDetail = await sanityClient.fetch(query, { slug });
 
   if (!area) {
-    // ... (bloco "Não Encontrado" inalterado)
     return (
       <div className="text-center py-20">
         <h1 className="text-3xl font-bold">Área de Atuação Não Encontrada</h1>
