@@ -1,7 +1,5 @@
 // src/app/areas-de-atuacao/page.tsx
 import Link from 'next/link';
-
-// Importações do Shadcn
 import { Button } from '@/components/ui/button';
 import { 
   Card, 
@@ -11,25 +9,36 @@ import {
   CardTitle 
 } from '@/components/ui/card';
 
-const areas = [
-    {
-      title: "Direito de Família e Sucessões",
-      description: "Soluções para divórcio, pensão, inventário e planejamento sucessório com sensibilidade e técnica.",
-      slug: "direito-de-familia-e-sucessoes",
-    },
-    {
-      title: "Direito Tributário",
-      description: "Defesa em execuções fiscais, planejamento e recuperação de créditos para sua segurança fiscal.",
-      slug: "direito-tributario",
-    },
-    {
-      title: "Direito do Consumidor",
-      description: "Atuação firme contra práticas abusivas e na busca pela reparação dos seus direitos como consumidor.",
-      slug: "direito-do-consumidor",
-    }
-  ];
+// 1. Importar o nosso cliente Sanity
+import { sanityClient } from '@/lib/sanity.client';
+import { groq } from 'next-sanity';
 
-export default function AreasPage() {
+// 2. Definir o tipo de dados que esperamos do CMS
+interface AreaSummary {
+  _id: string;
+  title: string;
+  description: string;
+  slug: {
+    current: string;
+  };
+}
+
+// 3. Definir a consulta GROQ para buscar apenas os dados necessários para os cards
+const query = groq`*[_type == "areaDeAtuacao"] | order(title asc) {
+  _id,
+  title,
+  description,
+  slug
+}`;
+
+// 4. Transformar a página num Async Component para permitir o fetch de dados
+export default async function AreasPage() {
+    
+    // 5. Buscar os dados diretamente do Sanity (isto acontece no servidor)
+    const areas: AreaSummary[] = await sanityClient.fetch(query);
+    
+    // O array estático 'const areas = [...]' foi removido.
+
     return (
         <section className="py-12">
             <div className="max-w-4xl mx-auto text-center">
@@ -40,23 +49,19 @@ export default function AreasPage() {
             </div>
             
             <div className="mt-12 max-w-4xl mx-auto space-y-8">
+                {/* 6. O map agora usa os dados dinâmicos do CMS */}
                 {areas.map((area) => (
-                    <Card key={area.slug} className="transition-shadow hover:shadow-lg">
+                    <Card key={area._id} className="transition-shadow hover:shadow-lg">
                         
-                        {/* * CORREÇÃO APLICADA AQUI:
-                          * O CardDescription foi movido para dentro do CardHeader.
-                        */}
                         <CardHeader>
                             <CardTitle>{area.title}</CardTitle>
                             <CardDescription className="pt-2">{area.description}</CardDescription>
                         </CardHeader>
 
-                        {/* * Agora o CardContent contém APENAS UM filho (o Button), 
-                          * o que resolve o erro.
-                        */}
                         <CardContent>
                             <Button asChild variant="link" className="p-0 h-auto"> 
-                                <Link href={`/areas-de-atuacao/${area.slug}`}>
+                                {/* 7. Linkar usando o slug.current do CMS */}
+                                <Link href={`/areas-de-atuacao/${area.slug.current}`}>
                                     Ver Detalhes
                                 </Link>
                             </Button>
@@ -67,3 +72,7 @@ export default function AreasPage() {
         </section>
     );
 }
+
+// 8. Adicionar Revalidação (ISR) - Opcional, mas recomendado.
+// Isto fará o Next.js verificar se há novo conteúdo no CMS a cada 60 segundos.
+export const revalidate = 60;

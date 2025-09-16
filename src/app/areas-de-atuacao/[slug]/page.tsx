@@ -1,34 +1,38 @@
 // src/app/areas-de-atuacao/[slug]/page.tsx
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react'; // Importando o ícone
+import { ArrowLeft } from 'lucide-react';
+import { sanityClient } from '@/lib/sanity.client'; // 1. Importar o cliente
+import { groq } from 'next-sanity';
+import { PortableText } from '@portabletext/react'; // 2. Importar o Renderizador
 
-const areasData: { [key: string]: { title: string; content: string[] } } = {
-  'direito-de-familia-e-sucessoes': {
-    title: 'Direito de Família e Sucessões',
-    content: [
-      'Compreendemos que as questões familiares exigem uma abordagem técnica, mas também humana e sensível. Atuamos com total sigilo e dedicação para proteger seu patrimônio e garantir a harmonia nas relações familiares.',
-      'Nossos serviços incluem: Divórcio Consensual e Litigioso; Pensão Alimentícia (fixação, revisão e exoneração); Guarda de Menores e Regulamentação de Visitas; Inventário e Partilha de Bens (judicial e extrajudicial); Planejamento Sucessório e Testamentos.'
-    ],
-  },
-  'direito-tributario': {
-    title: 'Direito Tributário',
-    content: [
-      'A complexa legislação tributária brasileira pode ser um grande desafio para pessoas físicas e jurídicas. Nossa atuação visa garantir a conformidade fiscal e otimizar a carga tributária de nossos clientes, oferecendo segurança para seus negócios.',
-      'Oferecemos: Planejamento Tributário para redução legal de impostos; Defesa em Execuções Fiscais em âmbito administrativo e judicial; Recuperação de Créditos Tributários; Consultoria Fiscal e elaboração de pareceres estratégicos.'
-    ],
-  },
-  'direito-do-consumidor': {
-    title: 'Direito do Consumidor',
-    content: [
-      'O Código de Defesa do Consumidor é um instrumento fundamental para equilibrar as relações de consumo. Atuamos de forma firme para garantir que seus direitos como consumidor sejam respeitados, combatendo práticas abusivas e buscando a devida reparação.',
-      'Atuamos em casos de: Problemas com Produtos ou Serviços (defeitos, vícios); Análise e anulação de Cláusulas Contratuais Abusivas; Cobranças Indevidas e negativação indevida em SPC/Serasa; Direito de Arrependimento e problemas em compras online.'
-    ],
-  },
-};
+// 3. Definir o tipo de dados para a página de detalhe
+interface AreaDetail {
+  title: string;
+  content: any; // O Portable Text é um tipo complexo, 'any' é seguro aqui.
+}
 
-export default async function AreaDetailPage({ params }: { params: { slug: string } }) {
-  const area = areasData[params.slug];
+// 4. Definir a consulta GROQ para buscar UMA área específica pelo slug
+const query = groq`*[_type == "areaDeAtuacao" && slug.current == $slug][0] {
+  title,
+  content
+}`;
+
+// 5. Remover completamente o objeto estático 'const areasData = {...}'
+
+// 6. Definir o tipo dos parâmetros que a página recebe
+type PageProps = {
+  params: {
+    slug: string;
+  }
+}
+
+// 7. A página agora é 'async' e recebe 'params'
+export default async function AreaDetailPage({ params }: PageProps) {
+  const { slug } = params;
+  
+  // 8. Buscar os dados específicos desta página no CMS
+  const area: AreaDetail = await sanityClient.fetch(query, { slug });
 
   // Bloco "Não Encontrado" (Atualizado para Shadcn Button)
   if (!area) {
@@ -59,13 +63,17 @@ export default async function AreaDetailPage({ params }: { params: { slug: strin
           </Link>
         </Button>
         
+        {/* 9. Renderizar o título vindo do CMS */}
         <h1 className="text-4xl font-bold mb-8">{area.title}</h1>
+        
+        {/* 10. Usar o componente PortableText para renderizar o conteúdo do CMS */}
         <div className="prose lg:prose-xl max-w-none dark:prose-invert space-y-4">
-          {area.content.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
+          <PortableText value={area.content} />
         </div>
       </div>
     </section>
   );
 }
+
+// 11. Adicionar Revalidação (ISR)
+export const revalidate = 60;
