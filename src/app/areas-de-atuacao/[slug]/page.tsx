@@ -6,7 +6,7 @@ import { sanityClient } from '@/lib/sanity.client';
 import { groq } from 'next-sanity';
 import { PortableText } from '@portabletext/react';
 import type { PortableTextBlock } from '@portabletext/types';
-import { notFound } from 'next/navigation'; // Importar a função notFound
+import { notFound } from 'next/navigation';
 
 // --- Tipos de Dados ---
 interface AreaDetail {
@@ -14,23 +14,26 @@ interface AreaDetail {
   content: PortableTextBlock[];
 }
 
-// --- Função para Gerar Rotas Estáticas (ESSENCIAL PARA O BUILD) ---
-// Esta função informa ao Next.js quais páginas de slug ele precisa construir.
+// ✅ A SUA SOLUÇÃO APLICADA AQUI: Interface explícita para as props da página
+interface PageProps {
+  params: {
+    slug: string;
+  };
+}
+
+// --- Função para Gerar Rotas Estáticas ---
 export async function generateStaticParams() {
   const query = groq`*[_type == "areaDeAtuacao" && defined(slug.current)][] {
     "slug": slug.current
   }`;
   const slugs: { slug: string }[] = await sanityClient.fetch(query);
   
-  // Retornamos um array de objetos, onde cada objeto tem a chave 'slug'
   return slugs.map(({ slug }) => ({
     slug,
   }));
 }
 
-
 // --- Função de Fetching de Dados Dedicada ---
-// Isolamos a lógica de buscar os dados do CMS em sua própria função.
 async function getAreaData(slug: string): Promise<AreaDetail | null> {
   const query = groq`*[_type == "areaDeAtuacao" && slug.current == $slug][0] {
     title,
@@ -40,12 +43,10 @@ async function getAreaData(slug: string): Promise<AreaDetail | null> {
   return area;
 }
 
-
-// --- Componente da Página (Agora mais simples) ---
-export default async function AreaDetailPage({ params }: { params: { slug: string } }) {
+// --- Componente da Página com a Tipagem Correta ---
+export default async function AreaDetailPage({ params }: PageProps) {
   const area = await getAreaData(params.slug);
 
-  // Se a área não for encontrada, renderiza a página 404.
   if (!area) {
     notFound();
   }
