@@ -1,18 +1,19 @@
-// tailwind.config.ts
-import type { Config } from 'tailwindcss'
-
-const config: Config = {
+// tailwind.config.js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: "class", // 👈 força o dark mode baseado em classe
   content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: "class",
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+      },
+    },
   },
-  plugins: [
-    require('@tailwindcss/typography'), // <<< ADICIONE ESTA LINHA
-  ],
-}
-export default config
+  plugins: [],
+};
+

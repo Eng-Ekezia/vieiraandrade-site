@@ -1,5 +1,7 @@
 // src/app/areas-de-atuacao/[slug]/page.tsx
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react'; // Importando o ícone
 
 const areasData: { [key: string]: { title: string; content: string[] } } = {
   'direito-de-familia-e-sucessoes': {
@@ -28,23 +30,37 @@ const areasData: { [key: string]: { title: string; content: string[] } } = {
 export default async function AreaDetailPage({ params }: { params: { slug: string } }) {
   const area = areasData[params.slug];
 
+  // Bloco "Não Encontrado" (Atualizado para Shadcn Button)
   if (!area) {
     return (
       <div className="text-center py-20">
-        <h1 className="text-3xl font-bold dark:text-white">Área de Atuação Não Encontrada</h1>
-        <p className="mt-4 dark:text-gray-300">O conteúdo que você procura não foi localizado.</p>
-        <Link href="/areas-de-atuacao" className="mt-6 inline-block text-blue-800 dark:text-blue-400 font-bold hover:underline">
-          Ver todas as áreas
-        </Link>
+        <h1 className="text-3xl font-bold">Área de Atuação Não Encontrada</h1>
+        <p className="mt-4 text-muted-foreground">O conteúdo que você procura não foi localizado.</p>
+        <Button asChild className="mt-6">
+          <Link href="/areas-de-atuacao">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Ver todas as áreas
+          </Link>
+        </Button>
       </div>
     );
   }
 
+  // Bloco Principal (Atualizado com botão Voltar)
   return (
     <section className="py-12">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-8">{area.title}</h1>
-        <div className="prose lg:prose-xl max-w-none text-gray-700 dark:text-gray-300 dark:prose-invert space-y-4">
+        
+        {/* BOTÃO VOLTAR ADICIONADO AQUI */}
+        <Button asChild variant="ghost" className="mb-4 text-muted-foreground">
+          <Link href="/areas-de-atuacao">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar para Áreas de Atuação
+          </Link>
+        </Button>
+        
+        <h1 className="text-4xl font-bold mb-8">{area.title}</h1>
+        <div className="prose lg:prose-xl max-w-none dark:prose-invert space-y-4">
           {area.content.map((paragraph, index) => (
             <p key={index}>{paragraph}</p>
           ))}

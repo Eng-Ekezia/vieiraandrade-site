@@ -1,6 +1,16 @@
 // src/app/areas-de-atuacao/page.tsx
 import Link from 'next/link';
 
+// Importações do Shadcn
+import { Button } from '@/components/ui/button';
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/card';
+
 const areas = [
     {
       title: "Direito de Família e Sucessões",
@@ -23,20 +33,35 @@ export default function AreasPage() {
     return (
         <section className="py-12">
             <div className="max-w-4xl mx-auto text-center">
-                <h1 className="text-4xl font-bold text-gray-800 mb-4">Áreas de Atuação</h1>
-                <p className="text-lg text-gray-600">
+                <h1 className="text-4xl font-bold mb-4">Áreas de Atuação</h1>
+                <p className="text-lg text-muted-foreground"> 
                     Nossa expertise a serviço da defesa dos seus direitos. Conheça nossas especialidades.
                 </p>
             </div>
+            
             <div className="mt-12 max-w-4xl mx-auto space-y-8">
                 {areas.map((area) => (
-                    <div key={area.slug} className="bg-white p-8 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
-                        <h2 className="text-2xl font-bold text-gray-800">{area.title}</h2>
-                        <p className="mt-4 text-gray-600">{area.description}</p>
-                        <Link href={`/areas-de-atuacao/${area.slug}`} className="mt-6 inline-block text-blue-800 font-bold hover:underline">
-                            Ver Detalhes
-                        </Link>
-                    </div>
+                    <Card key={area.slug} className="transition-shadow hover:shadow-lg">
+                        
+                        {/* * CORREÇÃO APLICADA AQUI:
+                          * O CardDescription foi movido para dentro do CardHeader.
+                        */}
+                        <CardHeader>
+                            <CardTitle>{area.title}</CardTitle>
+                            <CardDescription className="pt-2">{area.description}</CardDescription>
+                        </CardHeader>
+
+                        {/* * Agora o CardContent contém APENAS UM filho (o Button), 
+                          * o que resolve o erro.
+                        */}
+                        <CardContent>
+                            <Button asChild variant="link" className="p-0 h-auto"> 
+                                <Link href={`/areas-de-atuacao/${area.slug}`}>
+                                    Ver Detalhes
+                                </Link>
+                            </Button>
+                        </CardContent>
+                    </Card>
                 ))}
             </div>
         </section>
