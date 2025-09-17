@@ -1,12 +1,13 @@
 // src/app/areas-de-atuacao/[slug]/page.tsx
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import { sanityClient } from '@/lib/sanity.client';
-import { groq } from 'next-sanity';
-import { PortableText } from '@portabletext/react';
-import type { PortableTextBlock } from '@portabletext/types';
-import { notFound } from 'next/navigation';
+
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { sanityClient } from "@/lib/sanity.client";
+import { groq } from "next-sanity";
+import { PortableText } from "@portabletext/react";
+import type { PortableTextBlock } from "@portabletext/types";
+import { notFound } from "next/navigation";
 
 // --- Tipos de Dados ---
 interface AreaDetail {
@@ -14,38 +15,34 @@ interface AreaDetail {
   content: PortableTextBlock[];
 }
 
-// ✅ A SUA SOLUÇÃO APLICADA AQUI: Interface explícita para as props da página
-interface PageProps {
-  params: {
-    slug: string;
-  };
-}
-
 // --- Função para Gerar Rotas Estáticas ---
-export async function generateStaticParams() {
+export async function generateStaticParams(): Promise<{ slug: string }[]> {
   const query = groq`*[_type == "areaDeAtuacao" && defined(slug.current)][] {
     "slug": slug.current
   }`;
+
   const slugs: { slug: string }[] = await sanityClient.fetch(query);
-  
-  return slugs.map(({ slug }) => ({
-    slug,
-  }));
+
+  return slugs.map(({ slug }) => ({ slug }));
 }
 
-// --- Função de Fetching de Dados Dedicada ---
+// --- Função de Fetching de Dados ---
 async function getAreaData(slug: string): Promise<AreaDetail | null> {
   const query = groq`*[_type == "areaDeAtuacao" && slug.current == $slug][0] {
     title,
     content
   }`;
-  const area = await sanityClient.fetch<AreaDetail | null>(query, { slug });
-  return area;
+  return sanityClient.fetch<AreaDetail | null>(query, { slug });
 }
 
-// --- Componente da Página com a Tipagem Correta ---
-export default async function AreaDetailPage({ params }: PageProps) {
-  const area = await getAreaData(params.slug);
+// --- Página ---
+export default async function AreaDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params; // Await the params promise
+  const area = await getAreaData(slug);
 
   if (!area) {
     notFound();
@@ -60,9 +57,9 @@ export default async function AreaDetailPage({ params }: PageProps) {
             Voltar para Áreas de Atuação
           </Link>
         </Button>
-        
+
         <h1 className="text-4xl font-bold mb-8">{area.title}</h1>
-        
+
         <div className="prose lg:prose-xl max-w-none dark:prose-invert space-y-4">
           <PortableText value={area.content} />
         </div>
