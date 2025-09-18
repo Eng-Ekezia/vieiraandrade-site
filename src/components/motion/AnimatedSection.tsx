@@ -1,10 +1,12 @@
+// src/components/motion/AnimatedSection.tsx
 "use client";
 
-import { motion, HTMLMotionProps } from "framer-motion";
+import { motion } from "framer-motion";
 import { ReactNode } from "react";
 import { useScrollAnimation } from "@/hooks/animations/useScrollAnimation";
+import { useReducedMotion } from "@/hooks/animations/useReducedMotion";
 
-interface AnimatedSectionProps extends HTMLMotionProps<"div"> {
+interface AnimatedSectionProps {
   children: ReactNode;
   variant?: "fadeInUp" | "fadeInLeft" | "fadeInRight" | "scaleIn";
   delay?: number;
@@ -30,28 +32,39 @@ const variants = {
   },
 };
 
+// Versão simplificada para usuários que preferem movimento reduzido
+const reducedMotionVariants = {
+  fadeInUp: { hidden: { opacity: 0 }, visible: { opacity: 1 } },
+  fadeInLeft: { hidden: { opacity: 0 }, visible: { opacity: 1 } },
+  fadeInRight: { hidden: { opacity: 0 }, visible: { opacity: 1 } },
+  scaleIn: { hidden: { opacity: 0 }, visible: { opacity: 1 } },
+};
+
 export function AnimatedSection({
   children,
   variant = "fadeInUp",
   delay = 0,
-  className,
-  ...motionProps
+  className = "",
 }: AnimatedSectionProps) {
   const { ref, isInView } = useScrollAnimation();
+  const prefersReducedMotion = useReducedMotion();
+
+  const selectedVariants = prefersReducedMotion
+    ? reducedMotionVariants
+    : variants;
 
   return (
     <motion.div
       ref={ref}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      variants={variants[variant]}
+      variants={selectedVariants[variant]}
       transition={{
-        duration: 0.6,
+        duration: prefersReducedMotion ? 0.3 : 0.6,
         ease: "easeOut",
-        delay,
+        delay: prefersReducedMotion ? 0 : delay,
       }}
       className={className}
-      {...motionProps}
     >
       {children}
     </motion.div>
