@@ -1,11 +1,11 @@
-// tailwind.config.js
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+// tailwind.config.ts
+
+import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
+
+const config: Config = {
   darkMode: "class", // 👈 força o dark mode baseado em classe
-  content: [
-    "./src/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./src/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
@@ -24,6 +24,8 @@ module.exports = {
       },
     },
   },
-  // ATUALIZAÇÃO PRINCIPAL AQUI: Carregando o plugin de animação do shadcn
-  plugins: [require("tailwindcss-animate")],
+  // ATUALIZAÇÃO PRINCIPAL AQUI: Import ES modules ao invés de require
+  plugins: [tailwindcssAnimate],
 };
+
+export default config;
