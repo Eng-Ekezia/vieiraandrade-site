@@ -1,19 +1,16 @@
 // src/app/contato/contact-form.tsx
-'use client' 
+"use client";
 
-import { useState, useRef, type FormEvent } from 'react'; 
+import { useState, useRef, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2 } from 'lucide-react'; 
-import { submitContactAction } from './actions';
-import { toast } from 'sonner';
+import { Loader2, Send } from "lucide-react";
+import { motion } from "framer-motion";
+import { submitContactAction } from "./actions";
+import { toast } from "sonner";
 
-/**
- * Este é agora um Componente de Cliente dedicado APENAS ao formulário.
- * Toda a lógica de estado (useState, useRef) vive aqui.
- */
 export function ContactForm() {
   const [loading, setLoading] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
@@ -27,8 +24,8 @@ export function ContactForm() {
 
     setLoading(false);
 
-    if (response.status === 'success') {
-      toast.success(response.message); 
+    if (response.status === "success") {
+      toast.success(response.message);
       formRef.current?.reset();
     } else {
       toast.error(response.message);
@@ -36,43 +33,148 @@ export function ContactForm() {
   }
 
   return (
-    <div className="bg-card p-8 rounded-lg shadow-md border">
-      <h3 className="text-2xl font-bold mb-6">Envie sua Mensagem</h3>
-      
-      <form ref={formRef} onSubmit={handleFormSubmit} className="space-y-4">
-        
-        {/* Campo Nome */}
-        <div className="space-y-2">
-          <Label htmlFor="name">Nome</Label>
-          <Input type="text" id="name" name="name" placeholder="Seu nome completo" required disabled={loading} />
-        </div>
-        
-        {/* Campo Email */}
-          <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input type="email" id="email" name="email" placeholder="seuemail@dominio.com" required disabled={loading} />
-        </div>
+    <motion.form
+      ref={formRef}
+      onSubmit={handleFormSubmit}
+      className="space-y-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3, delay: 0.1 }}
+    >
+      {/* Nome */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+      >
+        <Label htmlFor="name" className="text-foreground font-medium">
+          Nome Completo *
+        </Label>
+        <Input
+          id="name"
+          name="name"
+          type="text"
+          required
+          placeholder="Seu nome completo"
+          className="mt-2 transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+          disabled={loading}
+        />
+      </motion.div>
 
-          {/* Campo Mensagem */}
-          <div className="space-y-2">
-          <Label htmlFor="message">Mensagem</Label>
-          <Textarea id="message" name="message" rows={4} placeholder="Digite sua dúvida ou solicitação..." required disabled={loading} />
-        </div>
+      {/* E-mail */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      >
+        <Label htmlFor="email" className="text-foreground font-medium">
+          E-mail *
+        </Label>
+        <Input
+          id="email"
+          name="email"
+          type="email"
+          required
+          placeholder="seu@email.com"
+          className="mt-2 transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+          disabled={loading}
+        />
+      </motion.div>
 
-        {/* Botão Enviar com estado de Loading */}
-        <div>
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Enviando...
-              </>
-            ) : (
-              'Enviar Mensagem'
-            )}
-          </Button>
-        </div>
-      </form>
-    </div>
+      {/* Telefone */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.3 }}
+      >
+        <Label htmlFor="phone" className="text-foreground font-medium">
+          Telefone
+        </Label>
+        <Input
+          id="phone"
+          name="phone"
+          type="tel"
+          placeholder="(00) 00000-0000"
+          className="mt-2 transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+          disabled={loading}
+        />
+      </motion.div>
+
+      {/* Assunto */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.4 }}
+      >
+        <Label htmlFor="subject" className="text-foreground font-medium">
+          Assunto *
+        </Label>
+        <Input
+          id="subject"
+          name="subject"
+          type="text"
+          required
+          placeholder="Assunto da sua mensagem"
+          className="mt-2 transition-all duration-300 focus:ring-2 focus:ring-primary/20"
+          disabled={loading}
+        />
+      </motion.div>
+
+      {/* Mensagem */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.5 }}
+      >
+        <Label htmlFor="message" className="text-foreground font-medium">
+          Mensagem *
+        </Label>
+        <Textarea
+          id="message"
+          name="message"
+          rows={5}
+          required
+          placeholder="Descreva sua questão ou necessidade..."
+          className="mt-2 transition-all duration-300 focus:ring-2 focus:ring-primary/20 resize-none"
+          disabled={loading}
+        />
+      </motion.div>
+
+      {/* Botão de Envio */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.6 }}
+      >
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full h-12 text-base font-medium transition-all duration-300 hover:scale-[1.02]"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+              Enviando...
+            </>
+          ) : (
+            <>
+              <Send className="h-5 w-5 mr-2" />
+              Enviar Mensagem
+            </>
+          )}
+        </Button>
+      </motion.div>
+
+      {/* Nota de Privacidade */}
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4, delay: 0.7 }}
+        className="text-sm text-muted-foreground"
+      >
+        * Campos obrigatórios. Seus dados são protegidos e não serão
+        compartilhados.
+      </motion.p>
+    </motion.form>
   );
 }

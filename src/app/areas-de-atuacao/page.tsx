@@ -1,19 +1,24 @@
 // src/app/areas-de-atuacao/page.tsx
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from '@/components/ui/card';
 
-// 1. Importar o nosso cliente Sanity
-import { sanityClient } from '@/lib/sanity.client';
-import { groq } from 'next-sanity';
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ArrowRight } from "lucide-react";
 
-// 2. Definir o tipo de dados que esperamos do CMS
+// Imports do Sanity
+import { sanityClient } from "@/lib/sanity.client";
+import { groq } from "next-sanity";
+
+// Import dos componentes de animação
+import { AnimatedSection } from "@/components/motion/AnimatedSection";
+
+// Tipos
 interface AreaSummary {
   _id: string;
   title: string;
@@ -23,7 +28,7 @@ interface AreaSummary {
   };
 }
 
-// 3. Definir a consulta GROQ para buscar apenas os dados necessários para os cards
+// Query
 const query = groq`*[_type == "areaDeAtuacao"] | order(title asc) {
   _id,
   title,
@@ -31,48 +36,117 @@ const query = groq`*[_type == "areaDeAtuacao"] | order(title asc) {
   slug
 }`;
 
-// 4. Transformar a página num Async Component para permitir o fetch de dados
 export default async function AreasPage() {
-    
-    // 5. Buscar os dados diretamente do Sanity (isto acontece no servidor)
-    const areas: AreaSummary[] = await sanityClient.fetch(query);
-    
-    // O array estático 'const areas = [...]' foi removido.
+  const areas: AreaSummary[] = await sanityClient.fetch(query);
 
-    return (
-        <section className="py-12">
-            <div className="max-w-4xl mx-auto text-center">
-                <h1 className="text-4xl font-bold mb-4">Áreas de Atuação</h1>
-                <p className="text-lg text-muted-foreground"> 
-                    Nossa expertise a serviço da defesa dos seus direitos. Conheça nossas especialidades.
-                </p>
-            </div>
-            
-            <div className="mt-12 max-w-4xl mx-auto space-y-8">
-                {/* 6. O map agora usa os dados dinâmicos do CMS */}
-                {areas.map((area) => (
-                    <Card key={area._id} className="transition-shadow hover:shadow-lg">
-                        
-                        <CardHeader>
-                            <CardTitle>{area.title}</CardTitle>
-                            <CardDescription className="pt-2">{area.description}</CardDescription>
-                        </CardHeader>
+  return (
+    <>
+      {/* Hero Section */}
+      <section className="relative bg-background py-16 lg:py-24">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            {/* Título Principal */}
+            <AnimatedSection variant="fadeInUp" delay={0.1}>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+                Áreas de Atuação
+              </h1>
+            </AnimatedSection>
 
-                        <CardContent>
-                            <Button asChild variant="link" className="p-0 h-auto"> 
-                                {/* 7. Linkar usando o slug.current do CMS */}
-                                <Link href={`/areas-de-atuacao/${area.slug.current}`}>
-                                    Ver Detalhes
-                                </Link>
-                            </Button>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
-        </section>
-    );
+            {/* Subtítulo */}
+            <AnimatedSection variant="fadeInUp" delay={0.3}>
+              <p className="text-xl sm:text-2xl text-muted-foreground mt-6 max-w-3xl mx-auto leading-relaxed">
+                Nossa expertise a serviço da defesa dos seus direitos. Conheça
+                nossas especialidades.
+              </p>
+            </AnimatedSection>
+
+            {/* Divisor Visual */}
+            <AnimatedSection variant="scaleIn" delay={0.5}>
+              <div className="w-24 h-1 bg-primary mx-auto mt-8"></div>
+            </AnimatedSection>
+          </div>
+        </div>
+      </section>
+
+      {/* Seção de Cards */}
+      <section className="py-16 lg:py-24">
+        <div className="container mx-auto px-4">
+          {/* Grid de Cards das Áreas */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {areas.map((area, index) => (
+              <AnimatedSection
+                key={area._id}
+                variant="fadeInUp"
+                delay={0.2 + index * 0.1}
+                className="group"
+              >
+                <Link href={`/areas-de-atuacao/${area.slug.current}`}>
+                  <Card
+                    className="h-full border border-border/50 shadow-md hover:shadow-lg transition-all duration-300 bg-card
+                    hover:bg-accent/5 hover:border-primary/30
+                    md:hover:scale-105
+                    cursor-pointer group-hover:shadow-xl
+                  "
+                  >
+                    <CardHeader className="pb-4">
+                      <div className="flex items-start justify-between">
+                        <CardTitle className="text-xl font-semibold text-primary group-hover:text-primary/80 transition-colors flex-1 pr-2">
+                          {area.title}
+                        </CardTitle>
+                        <div className="flex-shrink-0 opacity-60 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
+                          <ArrowRight className="h-5 w-5 text-primary" />
+                        </div>
+                      </div>
+                    </CardHeader>
+
+                    <CardContent className="pt-0">
+                      <CardDescription className="text-muted-foreground leading-relaxed group-hover:text-foreground/80 transition-colors mb-6">
+                        {area.description}
+                      </CardDescription>
+
+                      {/* Indicador Visual */}
+                      <div className="mt-6 pt-4 border-t border-border/30">
+                        <div className="flex items-center text-sm font-medium text-primary/70 group-hover:text-primary transition-colors">
+                          <span>Ver detalhes</span>
+                          <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 lg:py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto text-center">
+            <AnimatedSection variant="fadeInUp" delay={0.1}>
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
+                Precisa de Ajuda Jurídica?
+              </h2>
+            </AnimatedSection>
+
+            <AnimatedSection variant="fadeInUp" delay={0.3}>
+              <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
+                Nossa equipe está pronta para analisar seu caso e oferecer a
+                melhor solução jurídica.
+              </p>
+            </AnimatedSection>
+
+            <AnimatedSection variant="scaleIn" delay={0.5}>
+              <Button asChild size="lg" className="text-lg px-8 py-4 h-auto">
+                <Link href="/contato">Agendar Consulta</Link>
+              </Button>
+            </AnimatedSection>
+          </div>
+        </div>
+      </section>
+    </>
+  );
 }
 
-// 8. Adicionar Revalidação (ISR) - Opcional, mas recomendado.
-// Isto fará o Next.js verificar se há novo conteúdo no CMS a cada 60 segundos.
 export const revalidate = 60;

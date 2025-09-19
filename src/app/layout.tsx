@@ -1,17 +1,85 @@
 // src/app/layout.tsx
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import { Providers } from './providers';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
-import { Toaster } from 'sonner'; // 1. Importar o Toaster
-import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
+import { Providers } from "./providers";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+import { Toaster } from "sonner";
+import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
-  title: 'Vieira de Andrade Advocacia',
-  description: 'Escritório de advocacia especializado em Direito de Família, Tributário e do Consumidor.',
+  title: {
+    default:
+      "Vieira de Andrade Advocacia - Direito de Família, Tributário e Consumidor",
+    template: "%s | Vieira de Andrade Advocacia",
+  },
+  description:
+    "Escritório de advocacia especializado em Direito de Família, Direito Tributário e Direito do Consumidor. Mais de 15 anos de experiência defendendo seus direitos.",
+  keywords: [
+    "advogado",
+    "direito de família",
+    "direito tributário",
+    "direito do consumidor",
+    "advocacia",
+    "jurídico",
+    "divórcio",
+    "pensão alimentícia",
+    "inventário",
+    "imposto de renda",
+    "defesa do consumidor",
+  ],
+  authors: [{ name: "Dr. Marcelo Vieira de Andrade" }],
+  creator: "Dr. Marcelo Vieira de Andrade",
+  publisher: "Vieira de Andrade Advocacia",
+  category: "Legal Services",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: "https://vieiraandrade.com.br",
+    title:
+      "Vieira de Andrade Advocacia - Direito de Família, Tributário e Consumidor",
+    description:
+      "Escritório de advocacia com mais de 15 anos de experiência. Especialistas em Direito de Família, Tributário e do Consumidor.",
+    siteName: "Vieira de Andrade Advocacia",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Vieira de Andrade Advocacia",
+    description:
+      "Escritório especializado em Direito de Família, Tributário e do Consumidor.",
+  },
+  alternates: {
+    canonical: "https://vieiraandrade.com.br",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
 };
 
 export default function RootLayout({
@@ -20,18 +88,34 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning className="scroll-smooth">
-      <body className={`${inter.className} flex flex-col min-h-screen bg-background text-foreground transition-colors duration-300`}>
+    <html lang="pt-BR" suppressHydrationWarning className={inter.variable}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+      </head>
+      <body className="font-sans antialiased">
         <Providers>
-          <Header />
-          {/* ATUALIZAÇÃO APLICADA AQUI: Adicionamos 'animate-fade-in' */}
-          <main className="flex-grow container mx-auto px-6 py-8 animate-fade-in">
-            {children}
-          </main>
-          <Footer />
-          
-          {/* 2. Adicionar o componente Toaster aqui (richColors habilita estilos de sucesso/erro) */}
-          <Toaster richColors position="top-right" />
+          <div className="flex min-h-screen flex-col">
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+          <Toaster
+            position="bottom-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: "hsl(var(--background))",
+                color: "hsl(var(--foreground))",
+                border: "1px solid hsl(var(--border))",
+              },
+            }}
+          />
         </Providers>
       </body>
     </html>
