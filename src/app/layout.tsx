@@ -8,7 +8,11 @@ import { Footer } from "@/components/Footer";
 import { Toaster } from "sonner";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -31,11 +35,10 @@ export const metadata: Metadata = {
     "imposto de renda",
     "defesa do consumidor",
   ],
-  authors: [{ name: "Dr. Vieira de Andrade" }],
-  creator: "Dr. Vieira de Andrade",
+  authors: [{ name: "Dr. Marcelo Vieira de Andrade" }],
+  creator: "Dr. Marcelo Vieira de Andrade",
   publisher: "Vieira de Andrade Advocacia",
   category: "Legal Services",
-  classification: "Legal",
   robots: {
     index: true,
     follow: true,
@@ -56,25 +59,12 @@ export const metadata: Metadata = {
     description:
       "Escritório de advocacia com mais de 15 anos de experiência. Especialistas em Direito de Família, Tributário e do Consumidor.",
     siteName: "Vieira de Andrade Advocacia",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Vieira de Andrade Advocacia",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Vieira de Andrade Advocacia",
     description:
       "Escritório especializado em Direito de Família, Tributário e do Consumidor.",
-    images: ["/og-image.jpg"],
-  },
-  verification: {
-    // google: 'google-verification-code',
-    // other: 'other-verification-code',
   },
   alternates: {
     canonical: "https://vieiraandrade.com.br",
@@ -83,12 +73,13 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
   ],
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  maximumScale: 5,
+  userScalable: true,
 };
 
 export default function RootLayout({
@@ -97,7 +88,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning className={inter.variable}>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -107,7 +98,7 @@ export default function RootLayout({
         />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       </head>
-      <body className={inter.className}>
+      <body className="font-sans antialiased">
         <Providers>
           <div className="flex min-h-screen flex-col">
             <Header />
