@@ -3,70 +3,84 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { sanityClient } from "@/lib/sanity.client";
+import { sanityClient, urlFor } from "@/lib/sanity.client";
 import { PortableText } from "@portabletext/react";
 import { groq } from "next-sanity";
 import type { PortableTextBlock } from "@portabletext/types";
+import type { Image as SanityImage } from "sanity";
+// --- ÍCONES NOVOS IMPORTADOS ABAIXO ---
 import {
   Scale,
   Users,
   Award,
-  BookOpen,
+  BookOpenCheck, // Trocado de BookOpen para BookOpenCheck
   Heart,
   CheckCircle,
+  HeartHandshake, // Ícone novo
 } from "lucide-react";
 
 // Import dos componentes de animação
 import { AnimatedSection } from "@/components/motion/AnimatedSection";
 
-// Tipos
-interface PageSobreData {
+// --- Tipos de Dados (sem alteração) ---
+interface Value {
+  _key: string;
+  icon: string;
   title: string;
-  content: PortableTextBlock[];
+  description: string;
 }
 
-// Query para buscar conteúdo do Sanity
-const query = groq`*[_type == "pageSobre" && _id == "pageSobre"][0]`;
+interface Achievement {
+  _key: string;
+  number: string;
+  text: string;
+}
+
+interface PageSobreData {
+  title: string;
+  mainImage: {
+    alt: string;
+    asset: SanityImage;
+  };
+  content: PortableTextBlock[];
+  qualifications: string[];
+  achievements: Achievement[];
+  values: Value[];
+  mission: {
+    title: string;
+    text: string;
+  };
+}
+
+// --- Componente de Ícones Dinâmicos ATUALIZADO ---
+// Mapeia o nome do ícone (string do Sanity) para o componente React
+const iconMap: { [key: string]: React.ReactNode } = {
+  Scale: <Scale className="h-8 w-8 text-primary" />,
+  Users: <Users className="h-8 w-8 text-primary" />,
+  Award: <Award className="h-8 w-8 text-primary" />,
+  BookOpenCheck: <BookOpenCheck className="h-8 w-8 text-primary" />, // Atualizado
+  HeartHandshake: <HeartHandshake className="h-8 w-8 text-primary" />, // Adicionado
+  Heart: <Heart className="h-8 w-8 text-primary" />,
+};
+
+// --- Query (sem alteração) ---
+const query = groq`*[_type == "pageSobre" && _id == "pageSobre"][0]{
+  title,
+  mainImage {
+    alt,
+    asset
+  },
+  content,
+  qualifications,
+  achievements,
+  values,
+  mission
+}`;
 
 export default async function SobrePage() {
-  // Buscar dados do Sanity
   const data: PageSobreData = await sanityClient.fetch(query);
 
-  // Dados estáticos para elementos visuais (podem ser movidos para Sanity posteriormente)
-  const values = [
-    {
-      icon: <Scale className="h-8 w-8 text-primary" />,
-      title: "Ética e Transparência",
-      description:
-        "Conduzimos todos os casos com absoluta honestidade e transparência, mantendo nossos clientes sempre informados.",
-    },
-    {
-      icon: <Users className="h-8 w-8 text-primary" />,
-      title: "Atendimento Humanizado",
-      description:
-        "Cada cliente é único. Oferecemos atenção personalizada e compreendemos as necessidades específicas de cada caso.",
-    },
-    {
-      icon: <Award className="h-8 w-8 text-primary" />,
-      title: "Excelência Jurídica",
-      description:
-        "Buscamos sempre a melhor solução jurídica, utilizando todo nosso conhecimento e experiência em prol dos resultados.",
-    },
-    {
-      icon: <BookOpen className="h-8 w-8 text-primary" />,
-      title: "Atualização Constante",
-      description:
-        "O Direito evolui constantemente. Mantemos-nos atualizados com as mais recentes mudanças legislativas e jurisprudenciais.",
-    },
-  ];
-
-  const achievements = [
-    { number: "15+", text: "Anos de Experiência" },
-    { number: "500+", text: "Clientes Atendidos" },
-    { number: "95%", text: "Taxa de Sucesso" },
-    { number: "3", text: "Áreas de Especialização" },
-  ];
-
+  // O resto do componente continua igual...
   return (
     <>
       {/* Hero Section com conteúdo do Sanity */}
@@ -90,20 +104,32 @@ export default async function SobrePage() {
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-16 items-start max-w-7xl mx-auto">
-            {/* Foto do Dr. Vieira - ALTA RESOLUÇÃO */}
+            {/* Foto do Dr. Vieira - DINÂMICA */}
             <AnimatedSection variant="fadeInLeft" delay={0.2}>
               <div className="relative">
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                  <Image
-                    src="/dr-vieira-andrade.jpg"
-                    alt="Dr. Vieira de Andrade"
-                    width={1400}
-                    height={1800}
-                    quality={90}
-                    className="object-cover w-full h-[500px] lg:h-[600px] object-top"
-                    priority
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
+                  {data.mainImage?.asset ? (
+                    <Image
+                      src={urlFor(data.mainImage.asset)
+                        .width(1400)
+                        .height(1800)
+                        .quality(90)
+                        .url()}
+                      alt={data.mainImage.alt}
+                      width={1400}
+                      height={1800}
+                      quality={90}
+                      className="object-cover w-full h-[500px] lg:h-[600px] object-top"
+                      priority
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  ) : (
+                    <div className="w-full h-[500px] lg:h-[600px] bg-muted flex items-center justify-center">
+                      <p className="text-muted-foreground">
+                        Imagem não disponível
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Elementos decorativos */}
@@ -120,26 +146,20 @@ export default async function SobrePage() {
                 </div>
               </AnimatedSection>
 
+              {/* Qualificações - DINÂMICAS */}
               <AnimatedSection variant="fadeInRight" delay={0.5}>
                 <div className="flex flex-wrap gap-4 pt-6">
-                  <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
-                    <CheckCircle className="h-5 w-5 text-primary" />
-                    <span className="font-medium text-foreground">
-                      OAB Ativo
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
-                    <CheckCircle className="h-5 w-5 text-primary" />
-                    <span className="font-medium text-foreground">
-                      Pós-Graduado
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
-                    <CheckCircle className="h-5 w-5 text-primary" />
-                    <span className="font-medium text-foreground">
-                      15+ Anos
-                    </span>
-                  </div>
+                  {data.qualifications?.map((qualification) => (
+                    <div
+                      key={qualification}
+                      className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full"
+                    >
+                      <CheckCircle className="h-5 w-5 text-primary" />
+                      <span className="font-medium text-foreground">
+                        {qualification}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </AnimatedSection>
             </div>
@@ -147,7 +167,7 @@ export default async function SobrePage() {
         </div>
       </section>
 
-      {/* Statistics Section */}
+      {/* Statistics Section - DINÂMICA */}
       <section className="py-16 lg:py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
@@ -163,9 +183,9 @@ export default async function SobrePage() {
             </AnimatedSection>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-              {achievements.map((achievement, index) => (
+              {data.achievements?.map((achievement, index) => (
                 <AnimatedSection
-                  key={achievement.text}
+                  key={achievement._key || achievement.text}
                   variant="scaleIn"
                   delay={0.2 + index * 0.1}
                 >
@@ -184,7 +204,7 @@ export default async function SobrePage() {
         </div>
       </section>
 
-      {/* Values Section */}
+      {/* Values Section - DINÂMICA */}
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
@@ -201,16 +221,18 @@ export default async function SobrePage() {
             </AnimatedSection>
 
             <div className="grid md:grid-cols-2 gap-8">
-              {values.map((value, index) => (
+              {data.values?.map((value, index) => (
                 <AnimatedSection
-                  key={value.title}
+                  key={value._key || value.title}
                   variant="fadeInUp"
                   delay={0.2 + index * 0.1}
                 >
                   <div className="p-8 bg-card rounded-lg border border-border/50 hover:shadow-lg transition-all duration-300 group hover:border-primary/30">
                     <div className="flex items-start gap-6">
                       <div className="flex-shrink-0 p-3 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors duration-300">
-                        {value.icon}
+                        {iconMap[value.icon] || (
+                          <Heart className="h-8 w-8 text-primary" />
+                        )}
                       </div>
                       <div>
                         <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-primary transition-colors duration-300">
@@ -229,7 +251,7 @@ export default async function SobrePage() {
         </div>
       </section>
 
-      {/* Mission Section */}
+      {/* Mission Section - DINÂMICA */}
       <section className="py-16 lg:py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
@@ -243,16 +265,13 @@ export default async function SobrePage() {
 
             <AnimatedSection variant="fadeInUp" delay={0.2}>
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
-                Nossa Missão
+                {data.mission?.title}
               </h2>
             </AnimatedSection>
 
             <AnimatedSection variant="fadeInUp" delay={0.3}>
               <p className="text-xl text-muted-foreground leading-relaxed mb-8">
-                Proporcionar assessoria jurídica de excelência, defendendo os
-                direitos de nossos clientes com dedicação, ética e competência
-                técnica, sempre buscando soluções eficazes e personalizadas para
-                cada situação.
+                {data.mission?.text}
               </p>
             </AnimatedSection>
 

@@ -8,7 +8,7 @@ import { MapPin, Phone, Mail, Clock } from "lucide-react";
 // Import dos componentes de animação
 import { AnimatedSection } from "@/components/motion/AnimatedSection";
 
-// Tipos
+// --- Tipos de Dados Atualizados ---
 interface Settings {
   addressStreet: string;
   addressDistrict: string;
@@ -19,11 +19,25 @@ interface Settings {
   openingHours: string;
 }
 
-// Query
+interface PageContatoData {
+  whatsappCta: {
+    title: string;
+    text: string;
+  };
+}
+
+// --- Queries ---
 const settingsQuery = groq`*[_type == "settings" && _id == "settings"][0]`;
+const pageContatoQuery = groq`*[_type == "pageContato" && _id == "pageContato"][0]{
+  whatsappCta
+}`;
 
 export default async function ContatoPage() {
-  const settings: Settings = await sanityClient.fetch(settingsQuery);
+  // --- Fetch dos dados em paralelo ---
+  const [settings, pageData]: [Settings, PageContatoData] = await Promise.all([
+    sanityClient.fetch(settingsQuery),
+    sanityClient.fetch(pageContatoQuery),
+  ]);
 
   return (
     <>
@@ -41,7 +55,7 @@ export default async function ContatoPage() {
             {/* Subtítulo */}
             <AnimatedSection variant="fadeInUp" delay={0.3}>
               <p className="text-xl sm:text-2xl text-muted-foreground mt-6 max-w-3xl mx-auto leading-relaxed">
-                Estamos à disposição para esclarecer suas dúvidas. Envie uma
+                Estamos à disposição para esclarecer as suas dúvidas. Envie uma
                 mensagem ou entre em contato pelos nossos canais.
               </p>
             </AnimatedSection>
@@ -154,7 +168,7 @@ export default async function ContatoPage() {
               <AnimatedSection variant="fadeInRight" delay={0.2}>
                 <div className="bg-card border border-border/50 rounded-lg p-8 shadow-md hover:shadow-lg transition-all duration-300">
                   <h2 className="text-3xl font-bold text-foreground mb-6">
-                    Envie sua Mensagem
+                    Envie a sua Mensagem
                   </h2>
                   <p className="text-muted-foreground mb-8">
                     Preencha o formulário abaixo e entraremos em contato em
@@ -169,20 +183,19 @@ export default async function ContatoPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section - DINÂMICA */}
       <section className="py-16 lg:py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <AnimatedSection variant="fadeInUp" delay={0.1}>
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
-                Prefere Conversar por WhatsApp?
+                {pageData.whatsappCta?.title}
               </h2>
             </AnimatedSection>
 
             <AnimatedSection variant="fadeInUp" delay={0.3}>
               <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed">
-                Entre em contato conosco pelo WhatsApp para um atendimento mais
-                rápido e direto.
+                {pageData.whatsappCta?.text}
               </p>
             </AnimatedSection>
 

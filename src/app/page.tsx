@@ -18,10 +18,11 @@ import { groq } from "next-sanity";
 // Import dos componentes de animação
 import { AnimatedSection } from "@/components/motion/AnimatedSection";
 
-// Tipos
+// --- Tipos de Dados Atualizados ---
 interface PageHomeData {
   heroTitle: string;
   heroSubtitle: string;
+  areasSectionTitle: string; // <-- NOVO CAMPO
   ctaTitle: string;
   ctaText: string;
 }
@@ -35,8 +36,14 @@ interface AreaSummary {
   };
 }
 
-// Queries
-const pageHomeQuery = groq`*[_type == "pageHome" && _id == "pageHome"][0]`;
+// --- Queries Atualizadas ---
+const pageHomeQuery = groq`*[_type == "pageHome" && _id == "pageHome"][0]{
+  heroTitle,
+  heroSubtitle,
+  areasSectionTitle, // <-- NOVO CAMPO
+  ctaTitle,
+  ctaText
+}`;
 const areasQuery = groq`*[_type == "areaDeAtuacao"] | order(title asc) {
   _id,
   title,
@@ -83,14 +90,14 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Seção Cards das Áreas */}
+      {/* Seção Cards das Áreas - TÍTULO DINÂMICO */}
       <section className="py-20 lg:py-24">
         <div className="container mx-auto px-4">
           {/* Título da Seção */}
           <AnimatedSection variant="fadeInUp" delay={0.1}>
             <div className="text-center mb-16">
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-                Como Podemos Ajudar?
+                {pageData.areasSectionTitle}
               </h2>
               <div className="w-24 h-1 bg-primary mx-auto"></div>
             </div>
@@ -171,7 +178,7 @@ export default async function Home() {
                 variant="outline"
                 className="text-lg px-8 py-4 h-auto border-2 hover:bg-primary hover:text-primary-foreground"
               >
-                <Link href="/sobre">Conheça Nossa História</Link>
+                <Link href="/sobre">Conheça a Nossa História</Link>
               </Button>
             </AnimatedSection>
           </div>
