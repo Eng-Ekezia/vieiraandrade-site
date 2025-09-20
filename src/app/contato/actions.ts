@@ -38,7 +38,7 @@ export async function submitContactAction(
       from: "Contato do Site <contato@vieiraandrade.com.br>", // <- TROQUE AQUI pelo seu e-mail de envio
 
       // E-mail que receberá a mensagem do formulário
-      to: ["marcelovieiradeandrade@gmail.com"], // <- TROQUE AQUI pelo e-mail que vai receber a mensagem
+      to: ["ezequiel@engenhariacentral.com.br"], // <- TROQUE AQUI pelo e-mail que vai receber a mensagem
 
       subject: `Nova mensagem de contato de ${name}`,
       replyTo: email, // O e-mail de quem preencheu o formulário vai para o campo "responder a"
